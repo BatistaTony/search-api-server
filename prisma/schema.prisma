@@ -11,17 +11,16 @@ datasource db {
 }
 
 model Color {
-  id        Int      @id @default(autoincrement())
-  name      String
-  value     String
-  Product   Product? @relation(fields: [productId], references: [id])
-  productId Int?
+  id    Int    @id @default(autoincrement())
+  name  String
+  value String
+
 }
 
 model Product {
   id          Int      @id @default(autoincrement())
   name        String
   description String
-  colors      Color[]
+  colors      Int
   created_at  DateTime @default(now())
 }

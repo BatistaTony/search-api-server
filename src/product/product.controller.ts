@@ -8,13 +8,13 @@ interface ProductInterface {
   colorId: number;
 }
 
-@Controller('product')
+@Controller('products')
 export class ProductController {
   constructor(private productService: ProductService) {}
 
   @Get()
   async getProducts(): Promise<ProductModel[]> {
-    return [];
+    return this.productService.getAllProducts();
   }
 
   @Post('create')
@@ -25,9 +25,7 @@ export class ProductController {
     return this.productService.createProduct({
       description,
       name,
-      colors: {
-        connect: { id: colorId },
-      },
+      colors: colorId,
     });
   }
 }

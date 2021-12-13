@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { SearchController } from './search.controller';
 import { SearchService } from './search.service';
 
@@ -10,7 +11,7 @@ import { SearchService } from './search.service';
     ElasticsearchModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        node: configService.get('ELASTIC_SEARCH_URL'),
+        node: configService.get('ELASTIC_SEARCH_NODE'),
       }),
       inject: [ConfigService],
     }),
@@ -18,6 +19,6 @@ import { SearchService } from './search.service';
 
   exports: [ElasticsearchModule],
   controllers: [SearchController],
-  providers: [SearchService],
+  providers: [SearchService, PrismaService],
 })
 export class SearchModule {}

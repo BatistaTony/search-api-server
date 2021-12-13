@@ -1,28 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { SearchServiceInterface } from './search.interface';
 
 @Injectable()
-export class SearchService implements SearchServiceInterface<any> {
-  constructor(private readonly elasticSearchService: ElasticsearchService) {}
+export class SearchService {
+  constructor(
+    private readonly elasticSearchService: ElasticsearchService,
+    private prismaService: PrismaService,
+  ) {}
 
-  public async deleteDocument(indexData: any): Promise<any> {
-    return;
-  }
+  public async insertIndex(): Promise<any> {
+    const productDb = await this.prismaService.product.findMany();
 
-  public async deleteIndex(indexData: any): Promise<any> {
-    return;
-  }
+    const bulkBody = productDb.flatMap((product) => [
+      { index: { _index: 'product' } },
+      product,
+    ]);
 
-  public async insertIndex(bulkData: any): Promise<any> {
-    return;
+    await this.elasticSearchService.bulk({
+      refresh: true,
+      body: bulkBody,
+    });
+
+    return this.elasticSearchService.count({ index: 'product' });
   }
 
   public async searchIndex(searchData: any): Promise<any> {
-    return;
-  }
-
-  public async updateIndex(bulkData: any): Promise<any> {
     return;
   }
 }
